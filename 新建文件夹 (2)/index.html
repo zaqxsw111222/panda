@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <style>
+    #game {
+      text-align: center;
+      margin-top: 50px;
+      touch-action: manipulation;
+    }
+    #panda {
+      font-size: 40px;
+      transition: transform 0.3s ease;
+    }
+    #track {
+      height: 2px;
+      background: black;
+      margin: 20px 0;
+    }
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      margin: 10px;
+      touch-action: manipulation;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="panda">🐼</div>
+    <div id="track"></div>
+    <button ontouchstart="jump('flat')" onclick="jump('flat')">平调 →</button>
+    <button ontouchstart="jump('rise')" onclick="jump('rise')">升调 </button>
+  </div>
+
+  <script>
+  // 初始化音频上下文（iOS 安全策略要求）
+  document.addEventListener('touchstart', async () => {
+    await Tone.start()
+  }, { once: true })
+
+  const tones = {
+    flat: [60, 60],
+    rise: [60, 64],
+    fall: [64, 60]
+  };
+
+  function jump(type) {
+    const synth = new Tone.Synth().toDestination();
+    const now = Tone.now();
+    synth.triggerAttackRelease(tones[type][0], "8n", now);
+    synth.triggerAttackRelease(tones[type][1], "8n", now + 0.5);
+    
+    document.getElementById("panda").style.transform = 
+      `translateY(${type === 'rise' ? '-50px' : '0'})`;
+  }
+  </script>
+</body>
+</html>
